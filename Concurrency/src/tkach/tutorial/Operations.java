@@ -29,18 +29,18 @@ public class Operations {
 		if (a.getBalance() < amount) {
 			throw new InsufficientFundsException("Not enought funds to transfer");
 		}
-		System.out.println(LocalDateTime.now() + " ["+Thread.currentThread().getName()+"]" + " INFO - "
-				+ "Trying to lock " + a);
+		
+		printLog(" INFO - Trying to lock ", a);
 		synchronized (a) {
-			System.out.println(LocalDateTime.now() + " ["+Thread.currentThread().getName()+"]" + " INFO - "
-					+ "Locked " + a);
+			
+			printLog(" INFO - Locked ", a);
 			// Simulating deadlock
 			//Thread.sleep(1000);
-			System.out.println(LocalDateTime.now() + " ["+Thread.currentThread().getName()+"]" + " INFO - "
-					+ "Trying to lock " + b);
+			printLog(" INFO - Trying to lock ", b);
+			
 			synchronized (b) {
-				System.out.println(LocalDateTime.now() + " ["+Thread.currentThread().getName()+"]" + " INFO - "
-						+ "Locked " + b);
+				
+				printLog(" INFO - Locked ", b);
 				a.withdraw(amount);
 				b.deposit(amount);
 			}
@@ -51,6 +51,10 @@ public class Operations {
 				+ a + " = " + a.getBalance() + ", "
 				+ b + " = " + b.getBalance() + "\n");
 		
+	}
+	
+	protected static void printLog(String message, Account acc) {
+		System.out.println(LocalDateTime.now() + " ["+Thread.currentThread().getName()+"]" + message + acc);
 	}
 
 }
