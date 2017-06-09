@@ -62,27 +62,6 @@ public class Operations {
 			printLog(" ERROR - Cannot get a lock for ", a);
 		}
 		
-//		printLog(" INFO - Trying to lock ", a);
-//		synchronized (a) {
-//			
-//			printLog(" INFO - Locked ", a);
-//			// Simulating deadlock
-//			//Thread.sleep(1000);
-//			printLog(" INFO - Trying to lock ", b);
-//			
-//			synchronized (b) {
-//				
-//				printLog(" INFO - Locked ", b);
-//				a.withdraw(amount);
-//				b.deposit(amount);
-//			}
-//		}
-//		
-//		System.out.println("The transfer is successful.\n"
-//				+ "Account status after transfer operation:\n"
-//				+ a + " = " + a.getBalance() + ", "
-//				+ b + " = " + b.getBalance() + "\n");
-		
 	}
 	
 	protected static void printLog(String message, Account acc) {
