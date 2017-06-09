@@ -2,6 +2,7 @@ package tkach.tutorial;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.concurrent.TimeUnit;
 
 public class Operations {
 	public static void main(String[] args) throws InsufficientFundsException, InterruptedException {
@@ -30,26 +31,57 @@ public class Operations {
 			throw new InsufficientFundsException("Not enought funds to transfer");
 		}
 		
+		// Transfer with locks
 		printLog(" INFO - Trying to lock ", a);
-		synchronized (a) {
-			
+		if (a.getLock().tryLock(500, TimeUnit.MILLISECONDS)) {
 			printLog(" INFO - Locked ", a);
-			// Simulating deadlock
-			//Thread.sleep(1000);
-			printLog(" INFO - Trying to lock ", b);
-			
-			synchronized (b) {
+			try {
+				printLog(" INFO - Trying to lock ", b);
+				if (b.getLock().tryLock(500, TimeUnit.MILLISECONDS)) {
+					printLog(" INFO - Locked ", b);
+					try {
+						// Do transfer
+						System.out.println("Process transfer operation...");
+						a.withdraw(amount);
+						b.deposit(amount);
+						System.out.println("The transfer is successful.\n"
+								+ "Account status after transfer operation:\n"
+								+ a + " = " + a.getBalance() + ", "
+								+ b + " = " + b.getBalance() + "\n");
+					} finally {
+						b.getLock().unlock();
+					}
+				} else {
+					printLog(" ERROR - Cannot get a lock for ", b);
+				}
+			} finally {
+				a.getLock().unlock();
 				
-				printLog(" INFO - Locked ", b);
-				a.withdraw(amount);
-				b.deposit(amount);
 			}
+		} else {
+			printLog(" ERROR - Cannot get a lock for ", a);
 		}
 		
-		System.out.println("The transfer is successful.\n"
-				+ "Account status after transfer operation:\n"
-				+ a + " = " + a.getBalance() + ", "
-				+ b + " = " + b.getBalance() + "\n");
+//		printLog(" INFO - Trying to lock ", a);
+//		synchronized (a) {
+//			
+//			printLog(" INFO - Locked ", a);
+//			// Simulating deadlock
+//			//Thread.sleep(1000);
+//			printLog(" INFO - Trying to lock ", b);
+//			
+//			synchronized (b) {
+//				
+//				printLog(" INFO - Locked ", b);
+//				a.withdraw(amount);
+//				b.deposit(amount);
+//			}
+//		}
+//		
+//		System.out.println("The transfer is successful.\n"
+//				+ "Account status after transfer operation:\n"
+//				+ a + " = " + a.getBalance() + ", "
+//				+ b + " = " + b.getBalance() + "\n");
 		
 	}
 	
